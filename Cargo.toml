@@ -1,0 +1,10 @@
+[package]
+name = "interpreter"
+version = "0.1.0"
+authors = ["Arpith Siromoney <arpith@feedreader.co>"]
+
+[dependencies]
+
+[[bin]]
+name = "interpreter"
+path = "main.rs"
