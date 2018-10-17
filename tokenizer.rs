@@ -12,15 +12,6 @@ impl<'a> Tokenizer<'a> {
         Tokenizer{ input: input.chars().peekable() }
     }
 
-    fn skip_whitespace(&mut self) {
-        while let Some(&c) = self.input.peek() {
-            if !c.is_whitespace() {
-                break;
-            }
-            self.input.next();
-        }
-    }
-
     fn read_identifier(&mut self, first: char) -> Token {
         let mut ident = String::new();
         ident.push(first);
@@ -53,8 +44,10 @@ impl<'a> Tokenizer<'a> {
         Token::Literal(literal.parse().unwrap())
     }
 
-    pub fn next_token(&mut self) -> Token {
-        self.skip_whitespace();
+    pub fn next(&mut self) -> Token {
+        while self.input.peek() != None && self.input.peek().unwrap().is_whitespace() {
+            self.input.next();
+        }
 
         match self.input.next() {
             Some('=') => Token::Assign,

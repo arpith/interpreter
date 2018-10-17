@@ -21,7 +21,7 @@ fn main() {
     let mut tokenizer = Tokenizer::new(&mut contents);
 
     loop {
-        let tok = tokenizer.next_token();
+        let tok = tokenizer.next();
         println!("{:?}", tok);
         if tok == Token::EndOfFile {
             break;
