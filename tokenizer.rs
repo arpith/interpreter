@@ -3,13 +3,13 @@ use token::Token;
 use std::str::Chars;
 use std::iter::Peekable;
 
-pub struct Lexer<'a> {
+pub struct Tokenizer<'a> {
     input: Peekable<Chars<'a>>,
 }
 
-impl<'a> Lexer<'a> {
-    pub fn new(input: &str) -> Lexer {
-        Lexer { input: input.chars().peekable() }
+impl<'a> Tokenizer<'a> {
+    pub fn new(input: &str) -> Tokenizer {
+        Tokenizer{ input: input.chars().peekable() }
     }
 
     fn skip_whitespace(&mut self) {

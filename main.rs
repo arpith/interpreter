@@ -1,8 +1,8 @@
 pub mod token;
-pub mod lexer;
+pub mod tokenizer;
 
 use token::Token;
-use lexer::Lexer;
+use tokenizer::Tokenizer;
 use std::env;
 use std::fs::File;
 use std::io::prelude::*;
@@ -18,10 +18,10 @@ fn main() {
 
     println!("With text:\n{}", contents);
 
-    let mut lexer = Lexer::new(&mut contents);
+    let mut tokenizer = Tokenizer::new(&mut contents);
 
     loop {
-        let tok = lexer.next_token();
+        let tok = tokenizer.next_token();
         println!("{:?}", tok);
         if tok == Token::EndOfFile {
             break;
