@@ -1,8 +1,10 @@
 pub mod token;
 pub mod tokenizer;
+pub mod parser;
 
 use token::Token;
 use tokenizer::Tokenizer;
+use parser::Parser;
 use std::env;
 use std::fs::File;
 use std::io::prelude::*;
@@ -18,13 +20,16 @@ fn main() {
 
     println!("With text:\n{}", contents);
 
-    let mut tokenizer = Tokenizer::new(&mut contents);
+//    let mut tokenizer = Tokenizer::new(&mut contents);
 
-    loop {
-        let tok = tokenizer.next();
-        println!("{:?}", tok);
-        if tok == Token::EndOfFile {
-            break;
-        }
-    }
+  //  loop {
+    //    let tok = tokenizer.next();
+      //  println!("{:?}", tok);
+        //if tok == Token::EndOfFile {
+          //  break;
+        //}
+    //}
+
+    let mut parser = Parser::new(&mut contents);
+    parser.parse();
 }
