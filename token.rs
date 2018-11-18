@@ -3,12 +3,14 @@ pub enum Token {
     Illegal,
     EndOfFile,
 
-    Identifier(String),
+    Id(String),
     Literal(i32),
 
     Assign,
     Plus,
     Minus,
+    Multiply,
+
 
     Semicolon,
     LeftParenthesis,

@@ -23,7 +23,7 @@ impl<'a> Tokenizer<'a> {
             ident.push(self.input.next().unwrap());
         }
 
-        Token::Identifier(ident)
+        Token::Id(ident)
     }
 
     fn read_literal(&mut self, first: char) -> Token {
@@ -53,6 +53,7 @@ impl<'a> Tokenizer<'a> {
             Some('=') => Token::Assign,
             Some('+') => Token::Plus,
             Some('-') => Token::Minus,
+            Some('*') => Token::Multiply,
             Some(';') => Token::Semicolon,
             Some('(') => Token::LeftParenthesis,
             Some(')') => Token::RightParenthesis,
