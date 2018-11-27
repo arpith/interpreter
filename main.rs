@@ -2,8 +2,6 @@ pub mod token;
 pub mod tokenizer;
 pub mod parser;
 
-use token::Token;
-use tokenizer::Tokenizer;
 use parser::Parser;
 use std::env;
 use std::fs::File;
