@@ -7,4 +7,4 @@ authors = ["Arpith Siromoney <arpith@feedreader.co>"]
 
 [[bin]]
 name = "interpreter"
-path = "main.rs"
+path = "src/main.rs"
