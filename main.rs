@@ -18,16 +18,9 @@ fn main() {
 
     println!("With text:\n{}", contents);
 
-//    let mut tokenizer = Tokenizer::new(&mut contents);
-
-  //  loop {
-    //    let tok = tokenizer.next();
-      //  println!("{:?}", tok);
-        //if tok == Token::EndOfFile {
-          //  break;
-        //}
-    //}
-
     let mut parser = Parser::new(&mut contents);
-    parser.parse();
+    match parser.parse() {
+        Ok(values) => println!("{:?}", values),
+        Err(e) => println!("{}", e),
+    }
 }

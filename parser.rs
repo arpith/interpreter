@@ -28,17 +28,11 @@ impl<'a> Parser<'a> {
         }
     }
 
-    pub fn parse(&mut self) {
+    pub fn parse(&mut self) -> Result<HashMap<String, i32>, &'static str> {
         self.input_token = self.tokenizer.next();
-        match self.program() {
-            Err(e) => println!("{:?}", e),
-            Ok(()) => {
-                match self.match_token(Token::EndOfFile) {
-                    Err(e) => println!("{:?}", e),
-                    _ => println!("{:?}", self.values),
-                }
-            }
-        }
+        self.program()?;
+        self.match_token(Token::EndOfFile)?;
+        Ok(self.values.clone())
     }
 
     fn program(&mut self) -> Result<(), &'static str> {
