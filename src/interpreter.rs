@@ -1,6 +1,11 @@
 use token::Token;
 use tokenizer::Tokenizer;
 use std::collections::HashMap;
+use std;
+
+type Result<T> = std::result::Result<T, &'static str>;
+type Values = HashMap<String, i32>;
+type Lambda<T> = Box<Fn(Result<T>) -> Result<T>>;
 
 pub struct Interpreter<'a> {
     values: HashMap<String, i32>,
@@ -17,14 +22,14 @@ impl<'a> Interpreter<'a> {
         }
     }
 
-    pub fn run(&mut self) -> Result<HashMap<String, i32>, &'static str> {
+    pub fn run(&mut self) -> Result<Values> {
         self.input_token = self.tokenizer.next();
         self.program()?;
         self.match_token(Token::EndOfFile)?;
         Ok(self.values.clone())
     }
 
-    fn match_token(&mut self, expected_token: Token) -> Result<(), &'static str> {
+    fn match_token(&mut self, expected_token: Token) -> Result<()> {
         if self.input_token != expected_token {
             println!("expected {:?} got {:?}", expected_token, self.input_token);
             Err("couldn't match token")
@@ -34,7 +39,7 @@ impl<'a> Interpreter<'a> {
         }
     }
 
-    fn program(&mut self) -> Result<(), &'static str> {
+    fn program(&mut self) -> Result<()> {
         let _ = self.assignment()?;
         while self.input_token != Token::EndOfFile {
             let _ = self.assignment()?;
@@ -42,7 +47,7 @@ impl<'a> Interpreter<'a> {
         Ok(())
     }
 
-    fn assignment(&mut self) -> Result<i32, &'static str> {
+    fn assignment(&mut self) -> Result<i32> {
         match self.input_token {
             Token::Id(_) => {
                 let id = self.read_id()?;
@@ -57,7 +62,7 @@ impl<'a> Interpreter<'a> {
         }
     }
 
-    fn expression(&mut self) -> Result<i32, &'static str> {
+    fn expression(&mut self) -> Result<i32> {
         match self.input_token {
             Token::Id(_) | Token::Literal(_) | Token::LeftParenthesis | Token::Plus | Token::Minus => {
                 let t = self.term();
@@ -68,7 +73,7 @@ impl<'a> Interpreter<'a> {
         }
     }
 
-    fn expression_prime(&mut self) -> Result<Box<Fn(Result<i32, &'static str>) -> Result<i32, &'static str>>, &'static str> {
+    fn expression_prime(&mut self) -> Result<Lambda<i32>> {
         match self.input_token {
             Token::Plus => {
                 self.match_token(Token::Plus)?;
@@ -87,7 +92,7 @@ impl<'a> Interpreter<'a> {
         }
     }
 
-    fn term(&mut self) -> Result<i32, &'static str> {
+    fn term(&mut self) -> Result<i32> {
         match self.input_token {
             Token::Id(_) | Token::Literal(_) | Token::LeftParenthesis | Token::Plus | Token::Minus => {
                 let f = self.factor();
@@ -98,7 +103,7 @@ impl<'a> Interpreter<'a> {
         }
     }
 
-    fn term_prime(&mut self) -> Result<Box<Fn(Result<i32, &'static str>) -> Result<i32, &'static str>>, &'static str> {
+    fn term_prime(&mut self) -> Result<Lambda<i32>> {
         match self.input_token {
             Token::Multiply => {
                 self.match_token(Token::Multiply)?;
@@ -111,7 +116,7 @@ impl<'a> Interpreter<'a> {
         }
     }
 
-    fn read_id(&mut self) -> Result<String, &'static str> {
+    fn read_id(&mut self) -> Result<String> {
         match self.input_token {
             Token::Id(ref id) => Ok(id.to_string()),
             _ => Err("Not an id"),
@@ -122,7 +127,7 @@ impl<'a> Interpreter<'a> {
         self.input_token = self.tokenizer.next();
     }
 
-    fn factor(&mut self) -> Result<i32, &'static str> {
+    fn factor(&mut self) -> Result<i32> {
         match self.input_token {
             Token::Id(_) => {
                 let id = self.read_id()?;
