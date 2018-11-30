@@ -2,13 +2,15 @@
 Interpreter in Rust
 
 ## Status
-Currently the tokenizer has been implemented
+The tokenizer and parser have been implemented and example programs are interpreted. See tests directory for sample programs.
 
 ## Usage
-`$ cargo run input1.txt`
+`$ cargo run tests/input1.txt`
 
 ## Description
-The following defines a simple language, in which a program consists of assignments and each variable is assumed to be of the integer type. For the sake of simplicity, only operators that give integer values are included. Write an interpreter for the language in a language of your choice. Your interpreter should be able to do the following for a given program: (1) detect syntax errors; (2) report uninitialized variables; and (3) perform the assignments if there is no error and print out the values of all the variables after all the assignments are done.
+This is an interpreter written in Rust for [this simple language](http://www.sci.brooklyn.cuny.edu/~zhou/teaching/cis7120/project.html) (grammar described below), in which a program consists of assignments and each variable is assumed to be of the integer type. Only operators that give integer values are included. 
+
+The interpreter can detect syntax errors, report uninitialized variables and perform the assignments (if there are no errors) and print the values of the variables after all assignments.
 
 ## Grammar
 ```
@@ -44,7 +46,7 @@ Digit:
 ```
 
 ## Test cases
-Sample inputs and outputs
+Sample inputs and outputs. See the tests directory for more inputs.
 ```
 Input 1
 x = 001;
