@@ -1,7 +1,7 @@
 use token::Token;
 
-use std::str::Chars;
 use std::iter::Peekable;
+use std::str::Chars;
 
 pub struct Tokenizer<'a> {
     input: Peekable<Chars<'a>>,
@@ -9,7 +9,9 @@ pub struct Tokenizer<'a> {
 
 impl<'a> Tokenizer<'a> {
     pub fn new(input: &str) -> Tokenizer {
-        Tokenizer{ input: input.chars().peekable() }
+        Tokenizer {
+            input: input.chars().peekable(),
+        }
     }
 
     fn read_identifier(&mut self, first: char) -> Token {
@@ -38,7 +40,7 @@ impl<'a> Tokenizer<'a> {
         }
 
         if literal.len() > 1 && literal.starts_with('0') {
-            return Token::Illegal
+            return Token::Illegal;
         }
 
         Token::Literal(literal.parse().unwrap())
@@ -64,7 +66,7 @@ impl<'a> Tokenizer<'a> {
                 } else if ch.is_numeric() {
                     self.read_literal(ch)
                 } else {
-                    Token::Illegal 
+                    Token::Illegal
                 }
             }
 
@@ -72,4 +74,3 @@ impl<'a> Tokenizer<'a> {
         }
     }
 }
-

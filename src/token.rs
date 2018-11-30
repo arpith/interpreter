@@ -11,7 +11,6 @@ pub enum Token {
     Minus,
     Multiply,
 
-
     Semicolon,
     LeftParenthesis,
     RightParenthesis,

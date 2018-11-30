@@ -1,8 +1,8 @@
+use std;
+use std::collections::HashMap;
 use token::Token;
 use token::Token::*;
 use tokenizer::Tokenizer;
-use std::collections::HashMap;
-use std;
 
 type Result<T> = std::result::Result<T, &'static str>;
 type Values = HashMap<String, i32>;
@@ -16,7 +16,7 @@ pub struct Interpreter<'a> {
 
 impl<'a> Interpreter<'a> {
     pub fn new(input: &str) -> Interpreter {
-        Interpreter{
+        Interpreter {
             tokenizer: Tokenizer::new(input),
             input_token: EndOfFile,
             values: HashMap::new(),
@@ -58,7 +58,7 @@ impl<'a> Interpreter<'a> {
                 self.match_token(Semicolon)?;
                 self.values.insert(id.to_string(), v);
                 Ok(v)
-            },
+            }
             _ => Err("Couldn't parse assignment"),
         }
     }
@@ -69,7 +69,7 @@ impl<'a> Interpreter<'a> {
                 let t = self.term();
                 let e_p = self.expression_prime()?;
                 e_p(t)
-            },
+            }
             _ => Err("Couldn't parse expression"),
         }
     }
@@ -81,13 +81,13 @@ impl<'a> Interpreter<'a> {
                 let t = self.term();
                 let ep = self.expression_prime()?;
                 Ok(Box::new(move |v| Ok(v? + ep(t)?)))
-            },
+            }
             Minus => {
                 self.match_token(Minus)?;
                 let t = self.term();
                 let ep = self.expression_prime()?;
                 Ok(Box::new(move |v| Ok(v? - ep(t)?)))
-            },
+            }
             _ => Ok(Box::new(move |v| v)),
         }
     }
@@ -96,9 +96,9 @@ impl<'a> Interpreter<'a> {
         match self.input_token {
             Id(_) | Literal(_) | LeftParenthesis | Plus | Minus => {
                 let f = self.factor();
-                let tp  = self.term_prime()?;
+                let tp = self.term_prime()?;
                 tp(f)
-            },
+            }
             _ => Err("Couldn't parse term"),
         }
     }
@@ -110,7 +110,7 @@ impl<'a> Interpreter<'a> {
                 let f = self.factor();
                 let tp = self.term_prime()?;
                 Ok(Box::new(move |v| Ok(v? * tp(f)?)))
-            },
+            }
             _ => Ok(Box::new(move |v| v)),
         }
     }
@@ -145,17 +145,17 @@ impl<'a> Interpreter<'a> {
                 let val = self.expression();
                 self.match_token(RightParenthesis)?;
                 val
-            },
+            }
             Plus => {
                 self.match_token(Plus)?;
                 let val = self.factor()?;
                 Ok(val)
-            },
+            }
             Minus => {
                 self.match_token(Minus)?;
                 let val = self.factor()?;
                 Ok((-1) * val)
-            },
+            }
             _ => Err("Couldn't parse factor"),
         }
     }

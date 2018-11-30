@@ -1,6 +1,6 @@
+pub mod interpreter;
 pub mod token;
 pub mod tokenizer;
-pub mod interpreter;
 
 use interpreter::Interpreter;
 use std::env;
