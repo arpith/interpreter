@@ -18,7 +18,6 @@ impl<'a> Parser<'a> {
     }
 
     fn match_token(&mut self, expected_token: Token) -> Result<(), &'static str> {
-        println!("{:?}", self.input_token);
         if self.input_token != expected_token {
             println!("expected {:?} got {:?}", expected_token, self.input_token);
             Err("couldn't match token")
@@ -52,7 +51,6 @@ impl<'a> Parser<'a> {
                 let v = self.expression()?;
                 self.match_token(Token::Semicolon)?;
                 self.values.insert(id.to_string(), v);
-                println!("{:?}", self.values);
                 Ok(v)
             },
             _ => Err("Couldn't parse assignment"),
@@ -62,12 +60,9 @@ impl<'a> Parser<'a> {
     fn expression(&mut self) -> Result<i32, &'static str> {
         match self.input_token {
             Token::Id(_) | Token::Literal(_) | Token::LeftParenthesis | Token::Plus | Token::Minus => {
-                println!("{:?}", self.input_token);
                 let t = self.term();
                 let e_p = self.expression_prime()?;
-                let x = e_p(t);
-                println!("{:?}, {:?}, {:?}", self.input_token, x, t);
-                x
+                e_p(t)
             },
             _ => Err("Couldn't parse expression"),
         }
@@ -88,11 +83,7 @@ impl<'a> Parser<'a> {
                 Ok(Box::new(move |v| Ok(v? - ep(t)?)))
             },
             Token::RightParenthesis | Token::EndOfFile | Token::Semicolon => Ok(Box::new(move |v| v)),
-            _ => {
-                println!("in expression prime, couldn't match, going to return 'empty' function {:?}", self.input_token);
-                //Err("Couldn't parse expression prime")
-                Ok(Box::new(move |v| v))
-            },
+            _ => Ok(Box::new(move |v| v)),
         }
     }
 
@@ -103,10 +94,7 @@ impl<'a> Parser<'a> {
                 let tp  = self.term_prime()?;
                 tp(f)
             },
-            _ => {
-                println!("in term, going to error {:?}", self.input_token);
-                Err("Couldn't parse term")
-            }
+            _ => Err("Couldn't parse term"),
         }
     }
 
@@ -119,11 +107,7 @@ impl<'a> Parser<'a> {
                 Ok(Box::new(move |v| Ok(v? * tp(f)?)))
             },
             Token::RightParenthesis | Token::EndOfFile | Token::Semicolon => Ok(Box::new(move |v| v)),
-            _ => {
-                println!("in term prime, couldn't match, going to return 'empty' function {:?}", self.input_token);
-                //Err("Couldn't parse term prime"),
-                Ok(Box::new(move |v| v))
-            }
+            _ => Ok(Box::new(move |v| v)),
         }
     }
 
@@ -135,7 +119,6 @@ impl<'a> Parser<'a> {
     }
 
     fn consume(&mut self) {
-        println!("{:?}", self.input_token);
         self.input_token = self.tokenizer.next();
     }
 
