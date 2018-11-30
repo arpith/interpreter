@@ -88,7 +88,6 @@ impl<'a> Interpreter<'a> {
                 let ep = self.expression_prime()?;
                 Ok(Box::new(move |v| Ok(v? - ep(t)?)))
             },
-            RightParenthesis | EndOfFile | Semicolon => Ok(Box::new(move |v| v)),
             _ => Ok(Box::new(move |v| v)),
         }
     }
@@ -112,7 +111,6 @@ impl<'a> Interpreter<'a> {
                 let tp = self.term_prime()?;
                 Ok(Box::new(move |v| Ok(v? * tp(f)?)))
             },
-            RightParenthesis | EndOfFile | Semicolon => Ok(Box::new(move |v| v)),
             _ => Ok(Box::new(move |v| v)),
         }
     }
