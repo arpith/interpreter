@@ -1,8 +1,8 @@
 pub mod token;
 pub mod tokenizer;
-pub mod parser;
+pub mod interpreter;
 
-use parser::Parser;
+use interpreter::Interpreter;
 use std::env;
 use std::fs::File;
 use std::io::prelude::*;
@@ -18,8 +18,8 @@ fn main() {
 
     println!("With text:\n{}", contents);
 
-    let mut parser = Parser::new(&mut contents);
-    match parser.parse() {
+    let mut interpreter = Interpreter::new(&mut contents);
+    match interpreter.run() {
         Ok(values) => println!("{:?}", values),
         Err(e) => println!("{}", e),
     }

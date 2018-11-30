@@ -2,19 +2,26 @@ use token::Token;
 use tokenizer::Tokenizer;
 use std::collections::HashMap;
 
-pub struct Parser<'a> {
+pub struct Interpreter<'a> {
     values: HashMap<String, i32>,
     tokenizer: Tokenizer<'a>,
     input_token: Token,
 }
 
-impl<'a> Parser<'a> {
-    pub fn new(input: &str) -> Parser {
-        Parser{
+impl<'a> Interpreter<'a> {
+    pub fn new(input: &str) -> Interpreter {
+        Interpreter{
             tokenizer: Tokenizer::new(input),
             input_token: Token::EndOfFile,
             values: HashMap::new(),
         }
+    }
+
+    pub fn run(&mut self) -> Result<HashMap<String, i32>, &'static str> {
+        self.input_token = self.tokenizer.next();
+        self.program()?;
+        self.match_token(Token::EndOfFile)?;
+        Ok(self.values.clone())
     }
 
     fn match_token(&mut self, expected_token: Token) -> Result<(), &'static str> {
@@ -25,13 +32,6 @@ impl<'a> Parser<'a> {
             self.input_token = self.tokenizer.next();
             Ok(())
         }
-    }
-
-    pub fn parse(&mut self) -> Result<HashMap<String, i32>, &'static str> {
-        self.input_token = self.tokenizer.next();
-        self.program()?;
-        self.match_token(Token::EndOfFile)?;
-        Ok(self.values.clone())
     }
 
     fn program(&mut self) -> Result<(), &'static str> {
