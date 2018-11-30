@@ -1,4 +1,5 @@
 use token::Token;
+use token::Token::*;
 use tokenizer::Tokenizer;
 use std::collections::HashMap;
 use std;
@@ -25,7 +26,7 @@ impl<'a> Interpreter<'a> {
     pub fn run(&mut self) -> Result<Values> {
         self.input_token = self.tokenizer.next();
         self.program()?;
-        self.match_token(Token::EndOfFile)?;
+        self.match_token(EndOfFile)?;
         Ok(self.values.clone())
     }
 
@@ -41,7 +42,7 @@ impl<'a> Interpreter<'a> {
 
     fn program(&mut self) -> Result<()> {
         let _ = self.assignment()?;
-        while self.input_token != Token::EndOfFile {
+        while self.input_token != EndOfFile {
             let _ = self.assignment()?;
         }
         Ok(())
@@ -49,12 +50,12 @@ impl<'a> Interpreter<'a> {
 
     fn assignment(&mut self) -> Result<i32> {
         match self.input_token {
-            Token::Id(_) => {
+            Id(_) => {
                 let id = self.read_id()?;
                 self.consume();
-                self.match_token(Token::Assign)?;
+                self.match_token(Assign)?;
                 let v = self.expression()?;
-                self.match_token(Token::Semicolon)?;
+                self.match_token(Semicolon)?;
                 self.values.insert(id.to_string(), v);
                 Ok(v)
             },
@@ -64,7 +65,7 @@ impl<'a> Interpreter<'a> {
 
     fn expression(&mut self) -> Result<i32> {
         match self.input_token {
-            Token::Id(_) | Token::Literal(_) | Token::LeftParenthesis | Token::Plus | Token::Minus => {
+            Id(_) | Literal(_) | LeftParenthesis | Plus | Minus => {
                 let t = self.term();
                 let e_p = self.expression_prime()?;
                 e_p(t)
@@ -75,26 +76,26 @@ impl<'a> Interpreter<'a> {
 
     fn expression_prime(&mut self) -> Result<Lambda<i32>> {
         match self.input_token {
-            Token::Plus => {
-                self.match_token(Token::Plus)?;
+            Plus => {
+                self.match_token(Plus)?;
                 let t = self.term();
                 let ep = self.expression_prime()?;
                 Ok(Box::new(move |v| Ok(v? + ep(t)?)))
             },
-            Token::Minus => {
-                self.match_token(Token::Minus)?;
+            Minus => {
+                self.match_token(Minus)?;
                 let t = self.term();
                 let ep = self.expression_prime()?;
                 Ok(Box::new(move |v| Ok(v? - ep(t)?)))
             },
-            Token::RightParenthesis | Token::EndOfFile | Token::Semicolon => Ok(Box::new(move |v| v)),
+            RightParenthesis | EndOfFile | Semicolon => Ok(Box::new(move |v| v)),
             _ => Ok(Box::new(move |v| v)),
         }
     }
 
     fn term(&mut self) -> Result<i32> {
         match self.input_token {
-            Token::Id(_) | Token::Literal(_) | Token::LeftParenthesis | Token::Plus | Token::Minus => {
+            Id(_) | Literal(_) | LeftParenthesis | Plus | Minus => {
                 let f = self.factor();
                 let tp  = self.term_prime()?;
                 tp(f)
@@ -105,20 +106,20 @@ impl<'a> Interpreter<'a> {
 
     fn term_prime(&mut self) -> Result<Lambda<i32>> {
         match self.input_token {
-            Token::Multiply => {
-                self.match_token(Token::Multiply)?;
+            Multiply => {
+                self.match_token(Multiply)?;
                 let f = self.factor();
                 let tp = self.term_prime()?;
                 Ok(Box::new(move |v| Ok(v? * tp(f)?)))
             },
-            Token::RightParenthesis | Token::EndOfFile | Token::Semicolon => Ok(Box::new(move |v| v)),
+            RightParenthesis | EndOfFile | Semicolon => Ok(Box::new(move |v| v)),
             _ => Ok(Box::new(move |v| v)),
         }
     }
 
     fn read_id(&mut self) -> Result<String> {
         match self.input_token {
-            Token::Id(ref id) => Ok(id.to_string()),
+            Id(ref id) => Ok(id.to_string()),
             _ => Err("Not an id"),
         }
     }
@@ -129,7 +130,7 @@ impl<'a> Interpreter<'a> {
 
     fn factor(&mut self) -> Result<i32> {
         match self.input_token {
-            Token::Id(_) => {
+            Id(_) => {
                 let id = self.read_id()?;
                 self.consume();
                 match self.values.get(&id) {
@@ -137,23 +138,23 @@ impl<'a> Interpreter<'a> {
                     None => Err("uninitialized variable"),
                 }
             }
-            Token::Literal(lit) => {
+            Literal(lit) => {
                 self.consume();
                 Ok(lit)
             }
-            Token::LeftParenthesis => {
-                self.match_token(Token::LeftParenthesis)?;
+            LeftParenthesis => {
+                self.match_token(LeftParenthesis)?;
                 let val = self.expression();
-                self.match_token(Token::RightParenthesis)?;
+                self.match_token(RightParenthesis)?;
                 val
             },
-            Token::Plus => {
-                self.match_token(Token::Plus)?;
+            Plus => {
+                self.match_token(Plus)?;
                 let val = self.factor()?;
                 Ok(val)
             },
-            Token::Minus => {
-                self.match_token(Token::Minus)?;
+            Minus => {
+                self.match_token(Minus)?;
                 let val = self.factor()?;
                 Ok((-1) * val)
             },
