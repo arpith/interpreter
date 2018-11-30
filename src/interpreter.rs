@@ -9,7 +9,7 @@ type Values = HashMap<String, i32>;
 type Lambda<T> = Box<Fn(Result<T>) -> Result<T>>;
 
 pub struct Interpreter<'a> {
-    values: HashMap<String, i32>,
+    values: Values,
     tokenizer: Tokenizer<'a>,
     input_token: Token,
 }
@@ -18,7 +18,7 @@ impl<'a> Interpreter<'a> {
     pub fn new(input: &str) -> Interpreter {
         Interpreter{
             tokenizer: Tokenizer::new(input),
-            input_token: Token::EndOfFile,
+            input_token: EndOfFile,
             values: HashMap::new(),
         }
     }
