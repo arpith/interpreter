@@ -1,4 +1,5 @@
 use token::Token;
+use token::Token::*;
 
 use std::iter::Peekable;
 use std::str::Chars;
@@ -25,7 +26,7 @@ impl<'a> Tokenizer<'a> {
             ident.push(self.input.next().unwrap());
         }
 
-        Token::Id(ident)
+        Id(ident)
     }
 
     fn read_literal(&mut self, first: char) -> Token {
@@ -40,10 +41,10 @@ impl<'a> Tokenizer<'a> {
         }
 
         if literal.len() > 1 && literal.starts_with('0') {
-            return Token::Illegal;
+            return Illegal;
         }
 
-        Token::Literal(literal.parse().unwrap())
+        Literal(literal.parse().unwrap())
     }
 
     pub fn next(&mut self) -> Token {
@@ -52,13 +53,13 @@ impl<'a> Tokenizer<'a> {
         }
 
         match self.input.next() {
-            Some('=') => Token::Assign,
-            Some('+') => Token::Plus,
-            Some('-') => Token::Minus,
-            Some('*') => Token::Multiply,
-            Some(';') => Token::Semicolon,
-            Some('(') => Token::LeftParenthesis,
-            Some(')') => Token::RightParenthesis,
+            Some('=') => Assign,
+            Some('+') => Plus,
+            Some('-') => Minus,
+            Some('*') => Multiply,
+            Some(';') => Semicolon,
+            Some('(') => LeftParenthesis,
+            Some(')') => RightParenthesis,
 
             Some(ch @ _) => {
                 if ch.is_alphabetic() || ch == '_' {
@@ -66,11 +67,11 @@ impl<'a> Tokenizer<'a> {
                 } else if ch.is_numeric() {
                     self.read_literal(ch)
                 } else {
-                    Token::Illegal
+                    Illegal
                 }
             }
 
-            None => Token::EndOfFile,
+            None => EndOfFile,
         }
     }
 }
