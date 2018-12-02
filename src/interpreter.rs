@@ -41,14 +41,14 @@ impl<'a> Interpreter<'a> {
     }
 
     fn program(&mut self) -> Result<()> {
-        let _ = self.assignment()?;
+        self.assignment()?;
         while self.input_token != EndOfFile {
-            let _ = self.assignment()?;
+            self.assignment()?;
         }
         Ok(())
     }
 
-    fn assignment(&mut self) -> Result<i32> {
+    fn assignment(&mut self) -> Result<()> {
         match self.input_token {
             Id(_) => {
                 let id = self.read_id()?;
@@ -57,7 +57,7 @@ impl<'a> Interpreter<'a> {
                 let v = self.expression()?;
                 self.match_token(Semicolon)?;
                 self.values.insert(id.to_string(), v);
-                Ok(v)
+                Ok(())
             }
             _ => Err("Couldn't parse assignment"),
         }
